@@ -1,0 +1,38 @@
+<resources>
+    <string name="app_name">MISApplication</string>
+    <string name="spinner_title">Spinner</string>
+    <string name="forget_password">Forget Password</string>
+    <string name="empolye_name">Empolye Name</string>
+    <string name="remember_me">Remember Me</string>
+    <string name="log_in">Log In</string>
+    <string name="login">Login</string>
+    <!-- Change this to whatever the course website will be -->
+    <string name="profile_photo_file_name">profile_photo.png</string>
+    <string name="dialog_fragment_tag_photo_picker">dialog_fragment_photo_picker</string>
+    <string name="ui_profile_toast_save_text">Profile saved</string>
+    <string name="ui_profile_toast_cancel_text">Change canceled</string>
+    <string name="ui_button_save_title">Save</string>
+    <string name="ui_button_change_title">SnapNow</string>
+    <string name="ui_settings_profile_title">User Profile</string>
+    <string name="ui_settings_profile_summary">Names, Email, Class, etc</string>
+    <string name="ui_profile_photo_title">Profile photo:</string>
+    <string name="ui_profile_photo_content_description">Your profile photo:</string>
+    <string name="ui_profile_photo_picker_title">"Select profile image"</string>
+    <string name="Title_Text">Froget Password</string>
+    <string name="signup">Signup</string>
+    <string name="if_not_registered">* If not registered</string>
+    <string name="password">Password</string>
+    <string name="employee_code">Employee Code</string>
+    <string name="name">Name</string>
+    <string name="r_e_g_i_s_t_e_r">R E G I S T E R</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="confirm_new_password">Confirm New Password</string>
+    <string name="mobile_number">Mobile Number</string>
+    <string name="desgination">Desgination</string>
+    <string name="register">Register</string>
+    <string name="are_you_member_login">*Are you member? Login</string>
+
+    <string-array name="ui_profile_photo_picker_items">
+        <item>Take picture from camera</item>
+    </string-array>
+</resources>
