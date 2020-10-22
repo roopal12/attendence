@@ -112,7 +112,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     }
 
-//    if not connected..................
+    //if not connected..................
     private void showCustumDailog(){
         AlertDialog.Builder builder=new AlertDialog.Builder(LoginActivity.this);
         builder.setMessage("Please connect to the  internet to procced futher").setCancelable(false).setPositiveButton("Connect", new DialogInterface.OnClickListener() {
