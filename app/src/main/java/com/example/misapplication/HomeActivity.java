@@ -162,7 +162,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                     } else {
                         // Snackbar.make(recyclerView, "Allow Storage Permission", Snackbar.LENGTH_SHORT).show();
                         Log.e("onPermission", "Please Allow All Permissions");
-                        Toast.makeText(HomeActivity.this, "Allow All Permissions", Toast.LENGTH_LONG).show();
+                        Toast.makeText(HomeActivity.this, "Allow All  PERMISSIONED", Toast.LENGTH_LONG).show();
 
 
                     }
@@ -187,7 +187,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 dialog.cancel();
             }
         });
-
         builder.setNegativeButton("Back", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -197,6 +196,5 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         final AlertDialog dialog = builder.create();
         dialog.show();
     }
-
 
 }
