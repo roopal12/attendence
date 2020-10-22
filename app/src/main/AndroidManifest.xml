@@ -23,7 +23,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="AllowBackup">
-        <activity android:name=".ChangePassActivity"></activity>
+        <activity android:name=".ChangePassActivity" />
         <activity android:name=".OtpverficationActivity" />
         <activity android:name=".LoginActivity">
             <intent-filter>
