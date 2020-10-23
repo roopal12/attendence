@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Html;
@@ -177,8 +178,10 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
                         try {
                             progressDialog.dismiss();
                             System.out.println("response :" + response);
+                            Toast toast = Toast.makeText(SignupActivity.this,response, Toast.LENGTH_LONG);
+                            toast.getView().setBackgroundColor(Color.parseColor("#B80000"));
+                            toast.show();
 
-                                Toast.makeText(SignupActivity.this, response, Toast.LENGTH_SHORT).show();
 
                         } catch (Exception e) {
                             e.printStackTrace();

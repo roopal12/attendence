@@ -39,10 +39,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     String HttpURL = "https://androidjsonblog.000webhostapp.com/User/UserLogin.php";
 
-    Boolean CheckEditText ;
+
     ProgressDialog progressDialog;
-    HashMap<String,String> hashMap = new HashMap<>();
-    HttpParse httpParse = new HttpParse();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,19 +75,22 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 if(isConnected(this))
                 {
                     showCustumDailog();
+                    CodeHolder=EmpName.getText().toString().trim();
+                    PasswordHolder=Empasword.getText().toString().trim();
+                    if(CodeHolder.isEmpty())
+                    {
+                        EmpName.setError("Enter Employee Code");
+                    }
+                    if (PasswordHolder.isEmpty())
+                    {
+                        Empasword.setError("Enter Employee Code");
+                    }
+                    if(!CodeHolder.isEmpty() && !PasswordHolder.isEmpty())
+                    {
+
+                    }
                 }
-//                CheckEditTextIsEmptyOrNot();
-//                if(CheckEditText){
-//
-////                    UserLoginFunction(CodeHolder, PasswordHolder);
-//                    Toast.makeText(LoginActivity.this, " form fields.", Toast.LENGTH_LONG).show();
-//
-//                }
-//                else {
-//
-//                    Toast.makeText(LoginActivity.this, "Please fill all form fields.", Toast.LENGTH_LONG).show();
-//
-//                }
+
                 break;
             case R.id.forgetpassword:
                 Intent intentfg=new Intent(this,ForgetPassActivity.class);
@@ -104,14 +106,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         NetworkInfo moibleconnection=connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
         if(wificonnection!=null && wificonnection.isConnected() &&  moibleconnection!=null && moibleconnection.isConnected()){
             return true ;
-
         }
         else{
             return false;
         }
 
     }
-
     //if not connected..................
     private void showCustumDailog(){
         AlertDialog.Builder builder=new AlertDialog.Builder(LoginActivity.this);
@@ -132,68 +132,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
 
-
-    private void CheckEditTextIsEmptyOrNot() {
-        CodeHolder = EmpName.getText().toString();
-        PasswordHolder = Empasword.getText().toString();
-
-        if(TextUtils.isEmpty(CodeHolder) || TextUtils.isEmpty(PasswordHolder))
-        {
-            CheckEditText = false;
-        }
-        else {
-
-            CheckEditText = true ;
-        }
+    private void LoginFrom() {
     }
 
-    private void UserLoginFunction(String codeHolder, String passwordHolder) {
-        class UserLoginClass extends AsyncTask<String,Void,String> {
-
-            @Override
-            protected void onPreExecute() {
-                super.onPreExecute();
-
-                progressDialog = ProgressDialog.show(LoginActivity.this,"Loading Data",null,true,true);
-            }
-
-            @Override
-            protected void onPostExecute(String httpResponseMsg) {
-
-                super.onPostExecute(httpResponseMsg);
-
-                progressDialog.dismiss();
-
-                if(httpResponseMsg.equalsIgnoreCase("Data Matched")){
-
-                    finish();
-
-                    Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
-                    startActivity(intent);
-
-                }
-                else{
-
-                    Toast.makeText(LoginActivity.this,httpResponseMsg,Toast.LENGTH_LONG).show();
-                }
-
-            }
-
-            @Override
-            protected String doInBackground(String... params) {
-
-                hashMap.put("empcode",params[0]);
-
-                hashMap.put("password",params[1]);
-
-                finalResult = httpParse.postRequest(hashMap, HttpURL);
-
-                return finalResult;
-            }
-        }
-
-        UserLoginClass userLoginClass = new UserLoginClass();
-
-        userLoginClass.execute(codeHolder,passwordHolder);
-    }
 }
