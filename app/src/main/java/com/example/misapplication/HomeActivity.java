@@ -172,13 +172,11 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
     private void permissionDialog() {
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-
         builder.setTitle("Allow Permission!");
         builder.setMessage("Allow All Permissions");
         builder.setPositiveButton("Settings", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-
                 Intent intent = new Intent();
                 intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
                 Uri uri = Uri.fromParts("package", getPackageName(), null);

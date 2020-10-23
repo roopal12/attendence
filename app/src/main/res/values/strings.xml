@@ -31,6 +31,7 @@
     <string name="desgination">Desgination</string>
     <string name="register">Register</string>
     <string name="are_you_member_login">*Are you member? Login</string>
+    <string name="email">Email Id</string>
 
     <string-array name="ui_profile_photo_picker_items">
         <item>Take picture from camera</item>
