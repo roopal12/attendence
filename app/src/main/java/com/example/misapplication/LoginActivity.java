@@ -50,6 +50,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     String Loginurl = "http://easy2billing.com/attendance/api/logincheck.php";
     ProgressDialog progressDialog;
     private RequestQueue rQueue;
+    PrefManager prefManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +58,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         setContentView(R.layout.activity_login);
         sharedPreferencesLogin=getSharedPreferences("login",0);
         inti();
+        prefManager=new PrefManager(this);
+        if(!prefManager.isFirstTimeLaunch()){
+            startActivity(new Intent(LoginActivity.this,HomeActivity.class));
+            finish();
+        }
 
     }
 
@@ -186,12 +192,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             }
 
         };
-
         rQueue = Volley.newRequestQueue(LoginActivity.this);
         rQueue.add(stringRequest);
 
     }
-              
+
     private void parseData(String response) {
         try {
 

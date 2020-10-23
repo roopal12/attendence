@@ -61,6 +61,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
     private static final String TAG = HomeActivity.class.getSimpleName();
     private boolean sentToSettings = false;
+    PrefManager prefManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +70,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         sharedPreferenceslogin=getSharedPreferences("logindetails",MODE_PRIVATE);
         permissionStatus = getSharedPreferences("permissionStatus", MODE_PRIVATE);
         inti();
+
     }
 
     private void inti() {
