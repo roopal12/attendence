@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -23,7 +24,19 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.HashMap;
+import java.util.Map;
 
 @RequiresApi(api = Build.VERSION_CODES.R)
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
@@ -33,15 +46,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     Button buttonlogin;
     CheckBox checkBoxMe;
     SharedPreferences sharedPreferencesLogin;
-
     String PasswordHolder, CodeHolder;
-    String finalResult ;
-
-    String HttpURL = "https://androidjsonblog.000webhostapp.com/User/UserLogin.php";
-
-
+    String Loginurl = "http://easy2billing.com/attendance/api/logincheck.php";
     ProgressDialog progressDialog;
-
+    private RequestQueue rQueue;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,7 +95,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     }
                     if(!CodeHolder.isEmpty() && !PasswordHolder.isEmpty())
                     {
-
+                        Loginfrom(CodeHolder,PasswordHolder);
                     }
                 }
 
@@ -99,6 +107,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }
 
     }
+
     //    check internet connection
     private boolean isConnected(LoginActivity loginActivity) {
         ConnectivityManager connectivityManager= (ConnectivityManager)loginActivity.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -131,8 +140,97 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     }
 
+    private void Loginfrom(final String codeHolder, final String passwordHolder){
+        System.out.println("Login from ");
 
-    private void LoginFrom() {
+        /**
+         * Progress Dialog for User Interaction
+         */
+        progressDialog = new ProgressDialog(LoginActivity.this);
+        progressDialog.setTitle("Loding");
+        progressDialog.setMessage("Please Wait...");
+        progressDialog.show();
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, Loginurl,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+
+                        rQueue.getCache().clear();
+
+                        Toast.makeText(LoginActivity.this,response,Toast.LENGTH_LONG).show();
+
+                        try {
+                            System.out.println("response :" + response);
+                            parseData(response);
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        progressDialog.dismiss();
+
+                    }
+                },
+                new Response.ErrorListener(){
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(LoginActivity.this,error.toString(),Toast.LENGTH_LONG).show();
+                    }
+                }){
+            @Override
+            protected Map<String,String> getParams(){
+                Map<String,String> params = new HashMap<String, String>();
+                params.put("empcode",codeHolder);
+                params.put("password",passwordHolder);
+                return params;
+            }
+
+        };
+
+        rQueue = Volley.newRequestQueue(LoginActivity.this);
+        rQueue.add(stringRequest);
+
+    }
+              
+    private void parseData(String response) {
+        try {
+
+            JSONObject jsonObject = new JSONObject(response);
+            if(jsonObject.getString("success").equals("1")) {
+                JSONArray dataArray = jsonObject.getJSONArray("login");
+                for (int i = 0; i < dataArray.length(); i++) {
+
+                    JSONObject dataobj = dataArray.getJSONObject(i);
+
+                    String publicempcode = dataobj.getString("empcode");
+                    String publicname = dataobj.getString("name");
+                    String publicmobile = dataobj.getString("mobile");
+                    String publicemail = dataobj.getString("email");
+                    String publicdesignation= dataobj.getString("designation");
+
+                    System.out.println("empcode" + publicempcode);
+                    System.out.println("name" + publicname);
+                    System.out.println("mobile" + publicmobile);
+                    System.out.println("email" + publicemail);
+                    System.out.println("designation" + publicdesignation);
+                }
+
+                Intent intent = new Intent(LoginActivity.this,HomeActivity.class);
+                startActivity(intent);
+                finish();
+
+            }
+
+            else
+            {
+
+                Toast.makeText(LoginActivity.this,"Invalid User and Password",Toast.LENGTH_LONG).show();
+
+            }
+        }
+        catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
 }
