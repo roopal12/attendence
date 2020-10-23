@@ -22,4 +22,11 @@
             @style/ThemeOverlay.MaterialComponents.TextInputEditText.OutlinedBox.Dense
         </item>
     </style>
+
+
+    <!-- Toast Style -->
+    <style name="toastTextStyle" parent="TextAppearance.AppCompat">
+        <item name="android:fontFamily">sans-serif-black</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+    </style>
 </resources>

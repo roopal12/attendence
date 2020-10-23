@@ -6,6 +6,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.InputType;
@@ -178,10 +179,7 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
                         try {
                             progressDialog.dismiss();
                             System.out.println("response :" + response);
-                            Toast toast = Toast.makeText(SignupActivity.this,response, Toast.LENGTH_LONG);
-                            toast.getView().setBackgroundColor(Color.parseColor("#B80000"));
-                            toast.show();
-
+                            showMessage(response);
 
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -212,6 +210,34 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
         rQueue = Volley.newRequestQueue(SignupActivity.this);
         rQueue.add(stringRequest);
 
+    }
+
+    private void showMessage(String response) {
+        Toast toast
+                = Toast.makeText(
+                SignupActivity.this,
+                response,
+                Toast.LENGTH_SHORT);
+
+        // Getting the View
+        View view = toast.getView();
+
+        // Finding the textview in Toast view
+        TextView text
+                = (TextView)view.findViewById(
+                android.R.id.message);
+
+        // Setting the Text Appearance
+        if (Build.VERSION.SDK_INT
+                >= Build.VERSION_CODES.M) {
+            text.setTextAppearance(
+                    R.style.toastTextStyle);
+        }
+        // Showing the Toast Message
+        toast.show();
+        Intent intent=new Intent(SignupActivity.this,LoginActivity.class);
+        startActivity(intent);
+        finish();
     }
 
     private String getColoredSpanned(String text, String color) {

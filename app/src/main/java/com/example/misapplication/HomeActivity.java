@@ -61,19 +61,27 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
     private static final String TAG = HomeActivity.class.getSimpleName();
     private boolean sentToSettings = false;
+    PrefManager prefManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+        prefManager=new PrefManager(this);
+        prefManager.setFirstTimeLaunch(false);
         sharedPreferenceslogin=getSharedPreferences("logindetails",MODE_PRIVATE);
         permissionStatus = getSharedPreferences("permissionStatus", MODE_PRIVATE);
         inti();
+
     }
 
     private void inti() {
 
         textViewEname=findViewById(R.id.employeename);
+
+        String name = sharedPreferenceslogin.getString("name", "");
+        textViewEname.setText(name);
+
         buttonContinue=findViewById(R.id.btn_get_data);
         mImageView=findViewById(R.id.imageview_account_profile);
 
