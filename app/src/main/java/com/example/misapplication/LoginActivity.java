@@ -50,7 +50,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     String Loginurl = "http://easy2billing.com/attendance/api/logincheck.php";
     ProgressDialog progressDialog;
     private RequestQueue rQueue;
-    PrefManager prefManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,11 +57,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         setContentView(R.layout.activity_login);
         sharedPreferencesLogin=getSharedPreferences("login",0);
         inti();
-        prefManager=new PrefManager(this);
-        if(!prefManager.isFirstTimeLaunch()){
-            startActivity(new Intent(LoginActivity.this,HomeActivity.class));
-            finish();
-        }
 
     }
 
@@ -86,21 +80,25 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 startActivity(intent);
                 break;
             case R.id.login:
+                if(isConnected(this))
+                {
+                    showCustumDailog();
+                    CodeHolder=EmpName.getText().toString().trim();
+                    PasswordHolder=Empasword.getText().toString().trim();
+                    if(CodeHolder.isEmpty())
+                    {
+                        EmpName.setError("Enter Employee Code");
+                    }
+                    if (PasswordHolder.isEmpty())
+                    {
+                        Empasword.setError("Enter Employee Code");
+                    }
+                    if(!CodeHolder.isEmpty() && !PasswordHolder.isEmpty())
+                    {
+                        Loginfrom(CodeHolder,PasswordHolder);
+                    }
+                }
 
-                CodeHolder=EmpName.getText().toString().trim();
-                PasswordHolder=Empasword.getText().toString().trim();
-                if(CodeHolder.isEmpty())
-                {
-                    EmpName.setError("Enter Employee Code");
-                }
-                if (PasswordHolder.isEmpty())
-                {
-                    Empasword.setError("Enter Employee Password");
-                }
-                if(!CodeHolder.isEmpty() && !PasswordHolder.isEmpty())
-                {
-                    Loginfrom(CodeHolder,PasswordHolder);
-                }
                 break;
             case R.id.forgetpassword:
                 Intent intentfg=new Intent(this,ForgetPassActivity.class);
@@ -110,8 +108,41 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     }
 
+    //    check internet connection
+    private boolean isConnected(LoginActivity loginActivity) {
+        ConnectivityManager connectivityManager= (ConnectivityManager)loginActivity.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo wificonnection=connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        NetworkInfo moibleconnection=connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+        if(wificonnection!=null && wificonnection.isConnected() &&  moibleconnection!=null && moibleconnection.isConnected()){
+            return true ;
+        }
+        else{
+            return false;
+        }
+
+    }
+    //if not connected..................
+    private void showCustumDailog(){
+        AlertDialog.Builder builder=new AlertDialog.Builder(LoginActivity.this);
+        builder.setMessage("Please connect to the  internet to procced futher").setCancelable(false).setPositiveButton("Connect", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
+            }
+        }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                startActivity(new Intent(getApplicationContext(),HomeActivity.class));
+                finish();
+            }
+        });
+
+
+    }
+
     private void Loginfrom(final String codeHolder, final String passwordHolder){
         System.out.println("Login from ");
+
         /**
          * Progress Dialog for User Interaction
          */
@@ -132,8 +163,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         try {
                             System.out.println("response :" + response);
                             parseData(response);
-                            showMessage(response);
-
 
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -157,39 +186,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             }
 
         };
+
         rQueue = Volley.newRequestQueue(LoginActivity.this);
         rQueue.add(stringRequest);
 
     }
-
-    private void showMessage(String response) {
-        // Creating new instance of Toast
-        Toast toast
-                = Toast.makeText(
-                LoginActivity.this,
-                response,
-                Toast.LENGTH_SHORT);
-
-        // Getting the View
-        View view = toast.getView();
-
-        // Finding the textview in Toast view
-        TextView text
-                = (TextView)view.findViewById(
-                android.R.id.message);
-
-        // Setting the Text Appearance
-        if (Build.VERSION.SDK_INT
-                >= Build.VERSION_CODES.M) {
-            text.setTextAppearance(
-                    R.style.toastTextStyle);
-        }
-
-        // Showing the Toast Message
-        toast.show();
-
-}
-
+              
     private void parseData(String response) {
         try {
 
@@ -205,16 +207,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     String publicmobile = dataobj.getString("mobile");
                     String publicemail = dataobj.getString("email");
                     String publicdesignation= dataobj.getString("designation");
-
-
-                    SharedPreferences.Editor editor = sharedPreferencesLogin.edit();
-                    editor.putString("empcode", publicempcode);
-                    editor.putString("name",publicname);
-                    editor.putString("mobile", publicmobile);
-                    editor.putString("email",publicemail);
-                    editor.putString("designation",publicdesignation);
-                    editor.apply();
-                    editor.commit();
 
                     System.out.println("empcode" + publicempcode);
                     System.out.println("name" + publicname);
