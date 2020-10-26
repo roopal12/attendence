@@ -1,4 +1,4 @@
-package com.example.misapplication;
+package com.example.misapplication.session;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -12,7 +12,7 @@ public class PrefManager {
     //shared pref mode
     private int PRIVATE_MODE=0;
     //shared preferences file name
-    private static final String PREF_NAME="easygocms";
+    private static final String PREF_NAME="attendence";
 
     private static final String IS_FIRST_TIME_LAUNCH="IsFirstTimeLaunch";
 

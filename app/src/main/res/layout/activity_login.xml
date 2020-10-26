@@ -13,10 +13,9 @@
         android:layout_height="?android:attr/actionBarSize"
         android:background="@drawable/curve_toolbar_bg">
     </androidx.appcompat.widget.Toolbar>
-
     <View
         android:layout_width="wrap_content"
-        android:layout_height="40dp"
+        android:layout_height="20dp"
         android:id="@+id/view"
         android:layout_below="@+id/toolbar"/>
     <TextView
@@ -30,7 +29,6 @@
         android:id="@+id/logintxtview"
         android:gravity="center"
         android:textAlignment="center"/>
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -73,12 +71,10 @@
             android:inputType="textPassword"
             android:drawableStart="@drawable/ic_baseline_lock_24"
             android:importantForAutofill="no" />
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
-
             <CheckBox
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -120,7 +116,6 @@
             android:layout_marginBottom="10dp"
             android:layout_marginTop="0dp"
             android:background="@drawable/shapelogin"/>
-
         <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -142,8 +137,6 @@
             android:text="@string/signup"/>
     </LinearLayout>
 
-    </LinearLayout>
-
-
+      </LinearLayout>
 
 </RelativeLayout>

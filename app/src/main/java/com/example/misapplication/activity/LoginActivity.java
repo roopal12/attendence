@@ -1,22 +1,13 @@
-package com.example.misapplication;
+package com.example.misapplication.activity;
 
 import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ProgressDialog;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.Settings;
-import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -30,6 +21,10 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.misapplication.ForgetPassActivity;
+import com.example.misapplication.R;
+import com.example.misapplication.session.PrefManager;
+import com.muddzdev.styleabletoastlibrary.StyleableToast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -50,14 +45,19 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     String Loginurl = "http://easy2billing.com/attendance/api/logincheck.php";
     ProgressDialog progressDialog;
     private RequestQueue rQueue;
+    PrefManager prefManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        sharedPreferencesLogin=getSharedPreferences("login",0);
+        sharedPreferencesLogin=getSharedPreferences("login",MODE_PRIVATE);
+        prefManager = new PrefManager(this);
+        if (!prefManager.isFirstTimeLaunch()) {
+            startActivity(new Intent(LoginActivity.this, HomeActivity.class));
+            finish();
+        }
         inti();
-
     }
 
     private void inti()
@@ -76,13 +76,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.Signup:
-                Intent intent=new Intent(this,SignupActivity.class);
+                Intent intent=new Intent(this, SignupActivity.class);
                 startActivity(intent);
                 break;
             case R.id.login:
-                if(isConnected(this))
-                {
-                    showCustumDailog();
                     CodeHolder=EmpName.getText().toString().trim();
                     PasswordHolder=Empasword.getText().toString().trim();
                     if(CodeHolder.isEmpty())
@@ -97,49 +94,23 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     {
                         Loginfrom(CodeHolder,PasswordHolder);
                     }
-                }
-
                 break;
             case R.id.forgetpassword:
-                Intent intentfg=new Intent(this,ForgetPassActivity.class);
-                startActivity(intentfg);
+                CodeHolder=EmpName.getText().toString().trim();
+                if(CodeHolder.isEmpty())
+                {
+                    EmpName.setError("Enter Employee Code");
+                }
+                else
+                {
+                    Intent intentfg=new Intent(this, ForgetPassActivity.class);
+                    startActivity(intentfg);
+                    finish();
+                }
                 break;
         }
 
     }
-
-    //    check internet connection
-    private boolean isConnected(LoginActivity loginActivity) {
-        ConnectivityManager connectivityManager= (ConnectivityManager)loginActivity.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo wificonnection=connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-        NetworkInfo moibleconnection=connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
-        if(wificonnection!=null && wificonnection.isConnected() &&  moibleconnection!=null && moibleconnection.isConnected()){
-            return true ;
-        }
-        else{
-            return false;
-        }
-
-    }
-    //if not connected..................
-    private void showCustumDailog(){
-        AlertDialog.Builder builder=new AlertDialog.Builder(LoginActivity.this);
-        builder.setMessage("Please connect to the  internet to procced futher").setCancelable(false).setPositiveButton("Connect", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
-            }
-        }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                startActivity(new Intent(getApplicationContext(),HomeActivity.class));
-                finish();
-            }
-        });
-
-
-    }
-
     private void Loginfrom(final String codeHolder, final String passwordHolder){
         System.out.println("Login from ");
 
@@ -157,11 +128,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     public void onResponse(String response) {
 
                         rQueue.getCache().clear();
-
-                        Toast.makeText(LoginActivity.this,response,Toast.LENGTH_LONG).show();
-
                         try {
                             System.out.println("response :" + response);
+                            // Show images in Toast prompt.
+                            showImageInToast(response);
                             parseData(response);
 
                         } catch (Exception e) {
@@ -191,7 +161,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         rQueue.add(stringRequest);
 
     }
-              
+
+    private void showImageInToast(String response) {
+        StyleableToast.makeText(this,response,R.style.exampleToast).show();
+
+    }
+
     private void parseData(String response) {
         try {
 
@@ -207,6 +182,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     String publicmobile = dataobj.getString("mobile");
                     String publicemail = dataobj.getString("email");
                     String publicdesignation= dataobj.getString("designation");
+
+                    // Login  session........................
+                    SharedPreferences.Editor editor = sharedPreferencesLogin.edit();
+                    editor.putString("name",publicname);
+                    editor.putString("mobile",publicmobile);
+                    editor.apply();
+                    editor.commit();
 
                     System.out.println("empcode" + publicempcode);
                     System.out.println("name" + publicname);

@@ -1,28 +1,19 @@
-package com.example.misapplication;
+package com.example.misapplication.activity;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-import androidx.core.content.FileProvider;
-import androidx.fragment.app.DialogFragment;
 
 import android.Manifest;
-import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
-import androidx.exifinterface.media.ExifInterface;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
-import android.provider.MediaStore;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
@@ -30,17 +21,11 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 import de.hdodenhof.circleimageview.CircleImageView;
 
-import com.soundcloud.android.crop.BuildConfig;
-import com.soundcloud.android.crop.Crop;
+import com.example.misapplication.R;
+import com.example.misapplication.session.PrefManager;
+
 @RequiresApi(api = Build.VERSION_CODES.Q)
 public class HomeActivity extends AppCompatActivity implements View.OnClickListener{
 
@@ -67,6 +52,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+        //Session maintain.............
         prefManager=new PrefManager(this);
         prefManager.setFirstTimeLaunch(false);
         sharedPreferenceslogin=getSharedPreferences("logindetails",MODE_PRIVATE);
@@ -89,7 +75,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         mImageView.setOnClickListener(this);
 
     }
-
     @Override
     public void onClick(View view){
         switch (view.getId()) {
@@ -103,13 +88,12 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
-    private void ContinueButton() {
+    private void ContinueButton(){
 
     }
 
-
-    private void ClickImge(){
-
+    private void ClickImge()
+    {
 
     }
 

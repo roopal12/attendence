@@ -40,6 +40,7 @@ public class ChangePassActivity extends AppCompatActivity{
         card3 = (CardView)findViewById(R.id.card3);
         card4 = (CardView)findViewById(R.id.card4);
         cardButtonSignUp = (CardView)findViewById(R.id.cardsignup);
+
         mProgress =new ProgressDialog(this);
         String titleId="Password Changing......";
         mProgress.setTitle(titleId);
@@ -50,6 +51,7 @@ public class ChangePassActivity extends AppCompatActivity{
                 passwordValidate();
             }
         });
+
     }
     @SuppressLint("ResourceType")
     private void passwordValidate(){
@@ -91,7 +93,8 @@ public class ChangePassActivity extends AppCompatActivity{
         if (strpas.equals(strcfmpass)) {
             //password and confirm passwords equal.go to next step
             mProgress.show();
-            Toast.makeText(getApplicationContext(),"Correct Password",Toast.LENGTH_LONG).show();
+            String sessionempId = getIntent().getStringExtra("emp_id");
+
 
         }
         else
@@ -111,8 +114,6 @@ public class ChangePassActivity extends AppCompatActivity{
                  Toast.makeText(getApplicationContext(),"Enter Correct Password",Toast.LENGTH_LONG).show();
 
             }
-
-
 
     }
 }

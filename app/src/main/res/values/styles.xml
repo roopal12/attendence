@@ -29,4 +29,15 @@
         <item name="android:fontFamily">sans-serif-black</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
     </style>
+
+    <style name="exampleToast">
+        <item name="colorBackground">#F3E785</item>
+        <item name="textColor">#000</item>
+        <item name="strokeColor">#2196F3</item>
+        <item name="strokeWidth">30dp</item>
+        <item name="length">LONG</item>
+        <item name="cornerRadius">3dp</item>
+    </style>
+
+
 </resources>

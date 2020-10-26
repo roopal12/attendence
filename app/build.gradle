@@ -36,5 +36,6 @@ dependencies {
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'com.soundcloud.android:android-crop:1.0.1@aar'
     implementation 'com.android.volley:volley:1.1.1'
+    implementation 'com.muddzdev:styleabletoast:2.0.1'
 
 }

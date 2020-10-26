@@ -1,17 +1,14 @@
-package com.example.misapplication;
+package com.example.misapplication.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.graphics.Color;
-import android.os.AsyncTask;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.InputType;
-import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -23,10 +20,9 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.misapplication.R;
+import com.example.misapplication.SignotpActivity;
 import com.google.android.material.textfield.TextInputEditText;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -40,10 +36,14 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
     ProgressDialog progressDialog;
     String HttpRegis = "http://easy2billing.com/attendance/api/add_emp.php";
     private RequestQueue rQueue;
+    SharedPreferences sharedPrFRegis;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
+        sharedPrFRegis=getSharedPreferences("registration",MODE_PRIVATE);
         inti();
     }
 
@@ -65,7 +65,6 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
         String Loginblue = getColoredSpanned("Login","#0073A6");
         textViewLogin.setText(Html.fromHtml(name+" "+Loginblue));
 
-
     }
 
     @Override
@@ -81,11 +80,9 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
 
                 S_PassHolder=EditPassword.getText().toString().trim();
 
-                S_MobileHolder=EditMobile.getText().toString().trim();
+                 S_MobileHolder=EditMobile.getText().toString().trim();
 
                 S_DesignationHolder=EditDesignation.getText().toString().trim();
-
-
                 if(S_Name_Holder.isEmpty())
                 {
                     EditName.setError("Enter Name");
@@ -144,6 +141,16 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
                    !S_DesignationHolder.isEmpty())
                 {
 
+
+                    // Login  session........................
+                    SharedPreferences.Editor editor = sharedPrFRegis.edit();
+                    editor.putString("name",S_Name_Holder);
+                    editor.putString("code",S_Code_Holder);
+                    editor.putString("email",S_Name_Holder);
+                    editor.putString("mobile",S_Code_Holder);
+                    editor.apply();
+                    editor.commit();
+
                     Registrationfrom(S_Code_Holder,S_PassHolder,S_Name_Holder,S_MobileHolder,S_Email_Holder,S_DesignationHolder);
                 }
 
@@ -166,21 +173,15 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
         progressDialog.setTitle("Loding");
         progressDialog.setMessage("Please Wait...");
         progressDialog.show();
-
         StringRequest stringRequest = new StringRequest(Request.Method.POST, HttpRegis,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-
                         rQueue.getCache().clear();
-
-                        Toast.makeText(SignupActivity.this,response,Toast.LENGTH_LONG).show();
-
                         try {
                             progressDialog.dismiss();
                             System.out.println("response :" + response);
                             showMessage(response);
-
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -206,7 +207,6 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
             }
 
         };
-
         rQueue = Volley.newRequestQueue(SignupActivity.this);
         rQueue.add(stringRequest);
 
@@ -235,9 +235,18 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
         }
         // Showing the Toast Message
         toast.show();
-        Intent intent=new Intent(SignupActivity.this,LoginActivity.class);
-        startActivity(intent);
-        finish();
+        String strmatc="This Employee ID Is Already Exist";
+        if(!strmatc.equals(response))
+        {
+            Intent intent=new Intent(SignupActivity.this, SignotpActivity.class);
+            startActivity(intent);
+            finish();
+        }
+        else {
+
+            Toast.makeText(getApplicationContext(),"User Already Exist",Toast.LENGTH_LONG).show();
+        }
+
     }
 
     private String getColoredSpanned(String text, String color) {
