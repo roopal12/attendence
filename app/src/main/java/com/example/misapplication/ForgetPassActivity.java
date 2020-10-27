@@ -66,7 +66,8 @@ public class ForgetPassActivity extends AppCompatActivity {
                         public void onErrorResponse(VolleyError error) {
                             //displaying the error in toast if occurrs
                             Toast.makeText(getApplicationContext(), error.getMessage(), Toast.LENGTH_SHORT).show();
-                        }
+
+                         }
                     });
             // request queue
             RequestQueue requestQueue = Volley.newRequestQueue(this);

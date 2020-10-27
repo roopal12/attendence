@@ -99,7 +99,7 @@
                         android:layout_height="wrap_content"
                         android:hint="@string/email"
                         android:backgroundTint="@android:color/white"
-                        android:inputType="textPassword"
+                        android:inputType="textEmailAddress"
                         android:maxLines="1"
                         android:textColorHint="@android:color/black"
                         android:textColor="@android:color/black"/>

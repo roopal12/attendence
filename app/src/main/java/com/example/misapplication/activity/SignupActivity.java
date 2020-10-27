@@ -21,7 +21,6 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.misapplication.R;
-import com.example.misapplication.SignotpActivity;
 import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.HashMap;
@@ -47,7 +46,8 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
         inti();
     }
 
-    private void inti() {
+    private void inti(){
+
         EditName=findViewById(R.id.textInputEditTextName);
         EditCode=findViewById(R.id.textInputEditTextCode);
         EditPassword=findViewById(R.id.textInputEditTextPassword);
@@ -56,7 +56,6 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
         EditDesignation=findViewById(R.id.textInputEditTextDesgination);
         buttonSignup=findViewById(R.id.register);
         textViewLogin=findViewById(R.id.Loginpage);
-
 
         buttonSignup.setOnClickListener(this);
         textViewLogin.setOnClickListener(this);
@@ -83,11 +82,11 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
                  S_MobileHolder=EditMobile.getText().toString().trim();
 
                 S_DesignationHolder=EditDesignation.getText().toString().trim();
+
                 if(S_Name_Holder.isEmpty())
                 {
                     EditName.setError("Enter Name");
                     EditName.setInputType(InputType.TYPE_CLASS_TEXT);
-
 
                 }
                 if(S_Code_Holder.isEmpty())
@@ -96,11 +95,9 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
                     EditCode.setInputType(InputType.TYPE_CLASS_TEXT);
 
                 }
-
                 if(S_Email_Holder.isEmpty())
                 {
                     EditEmail.setError("Enter Email id");
-                    EditEmail.setInputType(InputType.TYPE_CLASS_TEXT);
 
                 }
                 if (!android.util.Patterns.EMAIL_ADDRESS.matcher(
@@ -109,7 +106,6 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
                     Toast.makeText(getApplicationContext(), "Invalid Email",
                             Toast.LENGTH_LONG).show();
                     EditEmail.setError("Invalid Email");
-
 
                 }
                 if (S_PassHolder.length() <= 7) {
@@ -141,7 +137,6 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
                    !S_DesignationHolder.isEmpty())
                 {
 
-
                     // Login  session........................
                     SharedPreferences.Editor editor = sharedPrFRegis.edit();
                     editor.putString("name",S_Name_Holder);
@@ -152,6 +147,7 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
                     editor.commit();
 
                     Registrationfrom(S_Code_Holder,S_PassHolder,S_Name_Holder,S_MobileHolder,S_Email_Holder,S_DesignationHolder);
+
                 }
 
 
@@ -177,12 +173,16 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
+
                         rQueue.getCache().clear();
+
                         try {
                             progressDialog.dismiss();
+
                             System.out.println("response :" + response);
                             showMessage(response);
-                        } catch (Exception e) {
+
+                        } catch(Exception e) {
                             e.printStackTrace();
                         }
 
@@ -191,7 +191,9 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
                 new Response.ErrorListener(){
                     @Override
                     public void onErrorResponse(VolleyError error) {
+
                         Toast.makeText(SignupActivity.this,error.toString(),Toast.LENGTH_LONG).show();
+
                     }
                 }){
             @Override

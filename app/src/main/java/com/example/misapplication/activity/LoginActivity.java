@@ -72,6 +72,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         textViewforgetp.setOnClickListener(this);
         textViewregistered.setOnClickListener(this);
     }
+
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
@@ -111,6 +112,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }
 
     }
+
     private void Loginfrom(final String codeHolder, final String passwordHolder){
         System.out.println("Login from ");
 
@@ -205,9 +207,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
             else
             {
-
                 Toast.makeText(LoginActivity.this,"Invalid User and Password",Toast.LENGTH_LONG).show();
-
             }
         }
         catch (JSONException e) {

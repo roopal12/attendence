@@ -11,6 +11,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -47,6 +48,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     private static final String TAG = HomeActivity.class.getSimpleName();
     private boolean sentToSettings = false;
     PrefManager prefManager;
+
+    private Bitmap cameraBitmap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,10 +95,12 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
+
     private void ClickImge()
     {
 
     }
+
 
     @Override
     protected void onStart() {

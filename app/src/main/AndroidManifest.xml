@@ -27,7 +27,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="AllowBackup">
-        <activity android:name=".SignotpActivity"></activity>
+        <activity android:name=".activity.SignotpActivity"></activity>
         <activity android:name=".ChangePassActivity" />
         <activity android:name=".OtpverficationActivity" />
         <activity android:name=".activity.LoginActivity">

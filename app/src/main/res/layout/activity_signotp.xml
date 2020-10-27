@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/backgroundimg"
-    tools:context=".SignotpActivity">
+    tools:context=".activity.SignotpActivity">
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
@@ -77,6 +77,8 @@
                             android:backgroundTint="@color/signupColor"
                             android:drawableLeft="@drawable/ic_perm_identity_black_24dp"
                             android:drawablePadding="10dp"
+                            android:inputType="number"
+                            android:maxLength="6"
                             android:hint="OTP"
                             android:textColor="@android:color/black"
                             android:textColorHint="@android:color/black"/>

@@ -5,21 +5,19 @@ import androidx.cardview.widget.CardView;
 
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
-import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Handler;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
-
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ChangePassActivity extends AppCompatActivity{
 
@@ -28,6 +26,8 @@ public class ChangePassActivity extends AppCompatActivity{
     CardView card1,card2,card3,card4,cardButtonSignUp;
     private ProgressDialog mProgress;
     private  boolean is8char=false, hasUpper=false, hasnum=false, hasSpecialSymbol =false, isSignupClickable = false;
+    private RequestQueue rQueue;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,6 +55,7 @@ public class ChangePassActivity extends AppCompatActivity{
     }
     @SuppressLint("ResourceType")
     private void passwordValidate(){
+
         strpas= editTextpswd.getText().toString();
         strcfmpass = editTextcnfmpswd.getText().toString();
 
@@ -90,15 +91,57 @@ public class ChangePassActivity extends AppCompatActivity{
             card4.setCardBackgroundColor(Color.parseColor(getString(R.color.colorAccent)));
         }
         // TODO Auto-generated method stub
-        if (strpas.equals(strcfmpass)) {
+        if (strpas.equals(strcfmpass)){
             //password and confirm passwords equal.go to next step
             mProgress.show();
-            String sessionempId = getIntent().getStringExtra("emp_id");
+            final String sessionempId = getIntent().getStringExtra("emp_id");
+            final String sessionempmobile = getIntent().getStringExtra("mobile");
 
 
+            String changespas="http://easy2billing.com/attendance/api/update_pass.php";
+            StringRequest stringRequest = new StringRequest(Request.Method.POST, changespas,
+                    new Response.Listener<String>(){
+                        @Override
+                        public void onResponse(String response) {
+
+                            rQueue.getCache().clear();
+
+                            try{
+
+                                System.out.println("response :" + response);
+
+                                Toast.makeText(getApplicationContext(),response,Toast.LENGTH_LONG).show();
+
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                            mProgress.dismiss();
+
+                        }
+                    },
+                    new Response.ErrorListener(){
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+
+                             Toast.makeText(ChangePassActivity.this,error.toString(),Toast.LENGTH_LONG).show();
+
+                        }
+                    }){
+                @Override
+                protected Map<String,String> getParams(){
+                    Map<String,String> params = new HashMap<String, String>();
+                    params.put("emp_id",sessionempId);
+                    params.put("mobile",sessionempmobile);
+                    params.put("new_pass",strcfmpass);
+                    return params;
+                }
+
+            };
+            rQueue = Volley.newRequestQueue(ChangePassActivity.this);
+            rQueue.add(stringRequest);
         }
-        else
-            {
+
+        else {
                  is8char = false;
                  card1.setCardBackgroundColor(Color.parseColor(getString(R.color.grey)));
 
