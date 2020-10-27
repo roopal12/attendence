@@ -7,18 +7,23 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,6 +32,17 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import com.example.misapplication.R;
 import com.example.misapplication.session.PrefManager;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.List;
+
+
+import com.tzutalin.dlib.Constants;
+import com.tzutalin.dlib.FaceDet;
+import com.tzutalin.dlib.VisionDetRet;
 @RequiresApi(api = Build.VERSION_CODES.Q)
 public class HomeActivity extends AppCompatActivity implements View.OnClickListener{
 
@@ -35,6 +51,10 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     CircleImageView mImageView;
 
     SharedPreferences sharedPreferenceslogin,permissionStatus;
+
+    PrefManager prefManager;
+
+    private final int PICK_IMAGE_CAMERA = 1;
 
     private static final int STORAGE_PERMISSION_CODE = 100;
     private static final int REQUEST_PERMISSION_SETTING = 101;
@@ -45,12 +65,17 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             Manifest.permission.CAMERA,
             Manifest.permission.ACCESS_MEDIA_LOCATION};
 
-    private static final String TAG = HomeActivity.class.getSimpleName();
+
+    private static final String TAGa = HomeActivity.class.getSimpleName();
     private boolean sentToSettings = false;
-    PrefManager prefManager;
 
-    private Bitmap cameraBitmap;
-
+   TextView et_image;
+    int BITMAP_QUALITY = 100;
+    int MAX_IMAGE_SIZE = 500;
+    String TAG = "AddPerson";
+    private Bitmap bitmap;
+    private File destination = null;
+    private String imgPath = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,6 +85,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         prefManager.setFirstTimeLaunch(false);
         sharedPreferenceslogin=getSharedPreferences("logindetails",MODE_PRIVATE);
         permissionStatus = getSharedPreferences("permissionStatus", MODE_PRIVATE);
+
         inti();
 
     }
@@ -73,9 +99,12 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
         buttonContinue=findViewById(R.id.btn_get_data);
         mImageView=findViewById(R.id.imageview_account_profile);
+        et_image=findViewById(R.id.getpath);
 
         buttonContinue.setOnClickListener(this);
         mImageView.setOnClickListener(this);
+
+        destination = new File(Constants.getFaceShapeModelPath() + "/temp.jpg");
 
     }
     @Override
@@ -98,10 +127,63 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
     private void ClickImge()
     {
-
+        try {
+            PackageManager pm = getPackageManager();
+            int hasPerm = pm.checkPermission(Manifest.permission.CAMERA, getPackageName());
+            if (hasPerm == PackageManager.PERMISSION_GRANTED) {
+                final CharSequence[] options = {"Take Photo","Cancel"};
+              AlertDialog.Builder builder = new AlertDialog.Builder(HomeActivity.this);
+                builder.setTitle("Select Option");
+                builder.setItems(options, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int item) {
+                        if (options[item].equals("Take Photo")) {
+                            dialog.dismiss();
+                            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                            startActivityForResult(intent, PICK_IMAGE_CAMERA);
+                        }
+                         else if (options[item].equals("Cancel")) {
+                            dialog.dismiss();
+                        }
+                    }
+                });
+                builder.show();
+            } else
+                Toast.makeText(this, "Camera Permission error", Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            Toast.makeText(this, "Camera Permission error", Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
+        }
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == PICK_IMAGE_CAMERA) {
+            try {
+                Uri selectedImage = data.getData();
+                bitmap = (Bitmap) data.getExtras().get("data");
+                Bitmap scaledBitmap = scaleDown(bitmap, MAX_IMAGE_SIZE, true);
+                et_image.setText(destination.getAbsolutePath());
+                new detectAsync().execute(scaledBitmap);
 
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public static Bitmap scaleDown(Bitmap realImage, float maxImageSize, boolean filter) {
+        float ratio = Math.min(
+                (float) maxImageSize / realImage.getWidth(),
+                (float) maxImageSize / realImage.getHeight());
+        int width = Math.round((float) ratio * realImage.getWidth());
+        int height = Math.round((float) ratio * realImage.getHeight());
+
+        Bitmap newBitmap = Bitmap.createScaledBitmap(realImage, width,
+                height, filter);
+        return newBitmap;
+    }
     @Override
     protected void onStart() {
         super.onStart();
@@ -191,5 +273,66 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         final AlertDialog dialog = builder.create();
         dialog.show();
     }
+
+    FaceDet faceDet ;
+
+    private class detectAsync extends AsyncTask<Bitmap, Void, String> {
+        ProgressDialog dialog = new ProgressDialog(HomeActivity.this);
+
+        @Override
+        protected void onPreExecute() {
+            dialog.setMessage("Detecting face...");
+            dialog.setCancelable(false);
+            dialog.show();
+            super.onPreExecute();
+        }
+
+        protected String doInBackground(Bitmap... bp) {
+            faceDet = new FaceDet(Constants.getFaceShapeModelPath());
+            List<VisionDetRet> results;
+            results = faceDet.detect(bp[0]);
+            String msg = null;
+            if (results.size()==0) {
+                msg = "No face was detected or face was too small. Please select a different image";
+            } else if (results.size() > 1) {
+                msg = "More than one face was detected. Please select a different image";
+            } else {
+                ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+                bp[0].compress(Bitmap.CompressFormat.JPEG, BITMAP_QUALITY, bytes);
+                FileOutputStream fo;
+                try {
+                    destination.createNewFile();
+                    fo = new FileOutputStream(destination);
+                    fo.write(bytes.toByteArray());
+                    fo.close();
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                imgPath = destination.getAbsolutePath();
+            }
+            return msg;
+        }
+
+        protected void onPostExecute(String result) {
+            if(dialog != null && dialog.isShowing()){
+                dialog.dismiss();
+                if (result!=null) {
+                    AlertDialog.Builder builder1 = new AlertDialog.Builder(HomeActivity.this);
+                    builder1.setMessage(result);
+                    builder1.setCancelable(true);
+                    AlertDialog alert11 = builder1.create();
+                    alert11.show();
+                    imgPath = null;
+                    et_image.setText("");
+                }
+//                enableSubmitIfReady();
+            }
+
+        }
+    }
+
+
 
 }
